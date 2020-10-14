@@ -85,6 +85,7 @@ static int nunchuck_accelz()
 }
 int loop_cnt = 0;
 byte joyx, joyy, zbut, cbut, accx, accy, accz;
+
 void _print() {
  Serial.print("Z Button:  ");
  Serial.print(zbut);
@@ -104,6 +105,7 @@ void _print() {
 }
 void setup() {
  Serial.begin(9600);
+ pinMode(10, INPUT_PULLUP);
  Serial.println("Before nuninit");
  nunchuck_init(); // send the initilization handshake
  Serial.println("Wii Nunchuck Ready");
@@ -118,6 +120,7 @@ bool aActive = false;
 bool dActive = false;
 bool fActive = false;
 bool cActive = false;
+bool bActive = false;
 
 int period = 10;
 unsigned long time_now = 0;
@@ -135,7 +138,19 @@ void loop() {
    accx = nunchuck_accelx();   //  70 - 182
    accy = nunchuck_accely();   //  65 - 173
    accz = nunchuck_accelz();   //  0 - 255
-   _print();
+   //_print();
+    if(digitalRead(10) == LOW && !bActive){
+        bActive = true;
+        Keyboard.press(KEY_LEFT_ALT);
+        delay(10);
+        Keyboard.release(KEY_LEFT_ALT);
+        delay(10);
+        Keyboard.press(KEY_LEFT_ALT);
+        delay(10);
+        Keyboard.release(KEY_LEFT_ALT);
+    }else if (digitalRead(10) == HIGH && bActive){
+      bActive = false;
+    }
 
     if (accx > 160 && !cActive){
       Keyboard.press('c');
